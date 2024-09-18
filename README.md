@@ -12,7 +12,7 @@ Supported syntax:
 * Special forms
 * Comments
 
-<img width="862" alt="image" src="https://github.com/user-attachments/assets/f617c238-1aa2-46c7-9f5e-b92624305470">
+<img width="838" alt="image" src="https://github.com/user-attachments/assets/e8f82965-dc69-4f5a-a2fa-3783ef5b55ea">
 
 ## Integrating with editors
 

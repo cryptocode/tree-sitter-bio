@@ -5,17 +5,11 @@ const STRING = token(
 );
 
 // Symbols can contain any character when escaped
-// Symbols cannot start with ?
 const SYMBOL = token(
-  /([^?# \n\s\f()\[\]'`,\\";]|\\.)([^# \n\s\f()\[\]'`,\\";]|\\.)*/
+  /([^ \n\s\f()'`,\\";]|\\.)([^ \n\s\f()'`,\\";]|\\.)*/
 );
 
-const ESCAPED_READER_SYMBOL = token(/\\(`|'|,)/);
-const INTERNED_EMPTY_STRING = token("##");
-
 const INTEGER_BASE10 = token(/[+-]?[0-9]+\.?/);
-const INTEGER_WITH_BASE = token(/#([box]|[0-9][0-9]?r)[0-9a-zA-Z]/);
-
 const FLOAT_WITH_DEC_POINT = token(/[+-]?[0-9]*\.[0-9]+/);
 const FLOAT_WITH_EXPONENT = token(/[+-]?[0-9]+[eE][0-9]+/);
 const FLOAT_WITH_BOTH = token(/[+-]?[0-9]*\.[0-9]+[eE][0-9]+/);
@@ -30,11 +24,10 @@ const HEX_CHAR = token(/\?\\x[0-9a-fA-F]+/);
 const OCTAL_CHAR = token(/\?\\[0-7]{1,3}/);
 
 // E.g. ?\C-o or ?\^o or ?\C-\S-o
-const KEY_CHAR = token(/\?(\\(([CMSHsA]-)|\^))+(\\;|.)/);
+// const KEY_CHAR = token(/\?(\\(([CMSHsA]-)|\^))+(\\;|.)/);
 // E.g. ?\M-\123
-const META_OCTAL_CHAR = token(/\?\\M-\\[0-9]{1,3}/);
-
-const BYTE_COMPILED_FILE_NAME = token("#$");
+// const META_OCTAL_CHAR = token(/\?\\M-\\[0-9]{1,3}/);
+// const BYTE_COMPILED_FILE_NAME = token("#$");
 
 module.exports = grammar({
   name: "bio",
@@ -50,10 +43,10 @@ module.exports = grammar({
         $.function_definition,
         $.macro_definition,
         $.list,
-        $.vector,
-        $.hash_table,
-        $.bytecode,
-        $.string_text_properties,
+        // $.vector,
+        // $.hash_table,
+        // $.bytecode,
+        // $.string_text_properties,
         $._atom,
         $.quote,
         $.unquote_splice,
@@ -127,7 +120,6 @@ module.exports = grammar({
         $.integer,
         $.char,
         $.string,
-        $.byte_compiled_file_name,
         $.symbol
       ),
     float: ($) =>
@@ -138,7 +130,7 @@ module.exports = grammar({
         FLOAT_INF,
         FLOAT_NAN
       ),
-    integer: ($) => choice(INTEGER_BASE10, INTEGER_WITH_BASE),
+    integer: ($) => choice(INTEGER_BASE10 ),
     char: ($) =>
       choice(
         CHAR,
@@ -147,11 +139,10 @@ module.exports = grammar({
         UPPER_CODE_POINT_CHAR,
         HEX_CHAR,
         OCTAL_CHAR,
-        KEY_CHAR,
-        META_OCTAL_CHAR
+        // KEY_CHAR,
+        // META_OCTAL_CHAR
       ),
     string: ($) => STRING,
-    byte_compiled_file_name: ($) => BYTE_COMPILED_FILE_NAME,
     symbol: ($) =>
       choice(
         // Match nil and t separately so we can highlight them.
@@ -164,23 +155,19 @@ module.exports = grammar({
         "defun",
         "defsubst",
         "defmacro",
-        ESCAPED_READER_SYMBOL,
         SYMBOL,
-        INTERNED_EMPTY_STRING
       ),
 
-    quote: ($) => seq(choice("#'", "'", "`"), $._sexp),
+    quote: ($) => seq(choice("'", "`"), $._sexp),
     unquote_splice: ($) => seq(",@", $._sexp),
     unquote: ($) => seq(",", $._sexp),
-
-    dot: ($) => token("."),
     list: ($) => seq("(", choice(repeat($._sexp)), ")"),
-    vector: ($) => seq("[", repeat($._sexp), "]"),
-    bytecode: ($) => seq("#[", repeat($._sexp), "]"),
 
-    string_text_properties: ($) => seq("#(", $.string, repeat($._sexp), ")"),
-
-    hash_table: ($) => seq("#s(hash-table", repeat($._sexp), ")"),
+    // dot: ($) => token("."),
+    // vector: ($) => seq("[", repeat($._sexp), "]"),
+    // bytecode: ($) => seq("#[", repeat($._sexp), "]"),
+    // string_text_properties: ($) => seq("#(", $.string, repeat($._sexp), ")"),
+    // hash_table: ($) => seq("#s(hash-table", repeat($._sexp), ")"),
 
     comment: ($) => COMMENT,
   },

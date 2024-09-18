@@ -52,8 +52,6 @@
 [
   "("
   ")"
-  "["
-  "]"
 ] @punctuation.bracket
 
 [
