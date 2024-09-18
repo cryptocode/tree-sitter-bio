@@ -32,7 +32,7 @@ indent = { tab-width = 4, unit = "  " }
 
 [[grammar]]
 name = "bio"
-source = { git = "https://github.com/cryptocode/tree-sitter-bio", rev = "30087fb7405b1fc7c694932e482bfa45be79c8d6" }
+source = { git = "https://github.com/cryptocode/tree-sitter-bio", rev = "bea420e96026a2fdaed7136efd4a87d78a7245aa" }
 ```
 
 You usually want to update `rev` to the latest commit, and `url` if you're forking this repository.
