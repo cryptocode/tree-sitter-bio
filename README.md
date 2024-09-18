@@ -12,10 +12,13 @@ Supported syntax:
 * Special forms
 * Comments
 
+<img width="862" alt="image" src="https://github.com/user-attachments/assets/f617c238-1aa2-46c7-9f5e-b92624305470">
+
 ## Integrating with editors
 
 See the documentation for nvim, helix, etc for up-to-date information on installing additional tree-sitter grammars.
 
+### Helix
 Here's an example for Helix:
 
 `~/.config/helix/languages.toml`
@@ -47,6 +50,63 @@ For highlighting to work, you may have to symlink the queries:
 
 ```bash
 ln -s ~/.config/helix/runtime/grammars/sources/bio/queries/ ~/.config/helix/runtime/queries/bio
+```
+
+## Neovim
+
+Here's an example config for nvim
+
+```lua
+vim.cmd([[
+call plug#begin()
+
+Plug 'https://github.com/catppuccin/nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'nvim-treesitter/playground'
+
+call plug#end()
+]])
+
+-- Set the colorscheme
+vim.cmd("colorscheme catppuccin-macchiato")
+
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.bio = {
+    install_info = {
+        -- Change url if you fork this repository
+        -- You can also use a file path
+        url = "https://github.com/cryptocode/tree-sitter-bio",
+        files = { "src/parser.c"},
+        branch = "main",
+        generate_reqires_npm = false,
+        requires_generate_from_grammar = false,
+    },
+    filetype = "bio",
+}
+
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = {"zig", "bio"},
+  highlight = {
+    enable = true,
+  },
+}
+
+vim.filetype.add({
+  extension = {
+    bio = 'bio'
+  }
+})
+```
+
+Now do `:TSInstall bio` in nvim, and `:TSUpdate bio` if you make changes.
+
+As with Helix, you may have to symlink the queries. Assuming you've cloned this repository
+to `~/projects`:
+
+```bash
+mkdir -p ~/.config/nvim/queries
+ln -s ~/projects/tree-sitter-bio/queries/ ~/.config/nvim/queries/bio
 ```
 
 ## Developing
